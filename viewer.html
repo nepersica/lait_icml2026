@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ICML 2026 페이퍼 일정 뷰어</title>
+<style>
+  :root{
+    --ink:#0d1b2a; --ink2:#354a60; --muted:#637589;
+    --ground:#eef2f7; --surface:#fff;
+    --accent:#1a56db;
+    --border:#d3dde9; --line2:#e8eef5; --code:#e4ecf5;
+    --Oral-bg:#fce8e6; --Oral-c:#b4452f; --Oral-b:#f3c9c1;
+    --Spotlight-bg:#faf0d6; --Spotlight-c:#9a6b12; --Spotlight-b:#ecd9a6;
+    --Poster-bg:#deecf3; --Poster-c:#2d6b8c; --Poster-b:#bcd9e7;
+    --Workshop-bg:#e9e3f4; --Workshop-c:#5e4a93; --Workshop-b:#d3c6ea;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--ground);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    font-size:14px;-webkit-font-smoothing:antialiased}
+  .app{display:flex;height:100vh;overflow:hidden}
+
+  /* ── Sidebar ── */
+  .side{width:220px;flex:0 0 220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+  .brand{padding:18px 16px 14px;border-bottom:1px solid var(--line2)}
+  .brand .eye{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .brand h1{font-size:16px;font-weight:700;color:var(--ink)}
+  .brand p{font-size:11px;color:var(--muted);margin-top:3px}
+  .sidenav{flex:1;overflow-y:auto;padding:8px}
+  .snlabel{padding:12px 10px 4px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#c5d0dc;font-weight:700}
+  .snitem{display:flex;align-items:center;gap:6px;width:100%;padding:7px 10px;margin-bottom:1px;
+    border:0;background:none;border-radius:8px;text-align:left;font-size:13px;color:var(--ink2);cursor:pointer}
+  .snitem:hover{background:#f1f5f9}
+  .snitem.active{background:var(--accent);color:#fff}
+  .snlbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .snbadge{font-size:10.5px;border-radius:999px;padding:1px 6px;background:#f1f5f9;color:#64748b;flex-shrink:0}
+  .snitem.active .snbadge{background:rgba(255,255,255,.2);color:#fff}
+
+  /* ── Main ── */
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+  .topbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .ttl{margin-right:auto}
+  .ttl h2{font-size:16px;font-weight:700;color:var(--ink)}
+  .ttl p{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .sdot{width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block;flex-shrink:0}
+  .sdot.ok{background:#22c55e}.sdot.err{background:#ef4444}
+  .sdot.loading{background:#f59e0b;animation:pulse .8s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  #stxt{font-size:11.5px;color:var(--muted)}
+  .sr{position:relative}
+  .sr svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted)}
+  .sr input{padding:6px 10px 6px 28px;border:1px solid var(--border);border-radius:7px;font-size:13px;width:180px;background:#fff;color:var(--ink)}
+  .sr input:focus{outline:none;border-color:#94a3b8}
+  .btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:#fff;color:var(--ink2);padding:6px 11px;border-radius:7px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--line2)}
+
+  /* ── Filter bar ── */
+  .filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:8px 20px;background:#fff;border-bottom:1px solid var(--line2)}
+  .fcap{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .chip{border:1px solid var(--border);background:#fff;color:#94a3b8;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;cursor:pointer}
+  .chip:hover{color:#475569}
+  .chip.on.Oral{background:var(--Oral-bg);color:var(--Oral-c);border-color:var(--Oral-b)}
+  .chip.on.Spotlight{background:var(--Spotlight-bg);color:var(--Spotlight-c);border-color:var(--Spotlight-b)}
+  .chip.on.Poster{background:var(--Poster-bg);color:var(--Poster-c);border-color:var(--Poster-b)}
+  .chip.on.Workshop{background:var(--Workshop-bg);color:var(--Workshop-c);border-color:var(--Workshop-b)}
+  .clr{font-size:12px;color:var(--muted);border:0;background:none;cursor:pointer;text-decoration:underline}
+  .clr:hover{color:var(--ink2)}
+  .stats-strip{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .sstat{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+  .ssdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+  /* ── Table ── */
+  .scroll{flex:1;min-height:0;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{
+    position:sticky;top:0;z-index:5;
+    background:#f4f7fbf0;backdrop-filter:blur(4px);
+    text-align:left;padding:9px 11px;white-space:nowrap;
+    border-bottom:1px solid var(--border);
+    font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)
+  }
+  thead th.srt{cursor:pointer;user-select:none}
+  thead th.srt:hover{color:var(--ink2)}
+  .arr{opacity:.3;margin-left:2px;font-size:9px}
+  tbody td{padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+  tbody tr:hover td{background:#f8fafc80}
+
+  /* Date group header row */
+  tr.dg td{
+    padding:5px 11px;
+    background:#edf2f8;
+    font-size:10.5px;font-weight:700;color:var(--ink2);letter-spacing:.03em;
+    border-top:2px solid #c8d6e8;border-bottom:1px solid var(--border);
+    position:sticky;top:39px;z-index:4;
+  }
+
+  /* Cells */
+  .pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:500;border:1px solid;white-space:nowrap}
+  .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+  .pill.Oral{background:var(--Oral-bg);color:var(--Oral-c);border-color:var(--Oral-b)}
+  .pill.Spotlight{background:var(--Spotlight-bg);color:var(--Spotlight-c);border-color:var(--Spotlight-b)}
+  .pill.Poster{background:var(--Poster-bg);color:var(--Poster-c);border-color:var(--Poster-b)}
+  .pill.Workshop{background:var(--Workshop-bg);color:var(--Workshop-c);border-color:var(--Workshop-b)}
+  .dot.Oral{background:#e0563f}.dot.Spotlight{background:#d39b27}.dot.Poster{background:#3f86ad}.dot.Workshop{background:#7a63b0}
+  .dim{color:#c8d5e0}
+  .nm{font-weight:600;color:#334155;white-space:nowrap}
+  .num{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+  a.ext{color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;font-size:12.5px}
+  a.ext:hover{text-decoration:underline}
+  .sched-date{font-weight:500;color:#334155;white-space:nowrap}
+  .sched-time{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:2px}
+  .conflict{margin-top:4px;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:#d97706;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:1px 6px}
+
+  /* Banner */
+  .banner{padding:8px 20px;font-size:12px;background:#fffbeb;color:#7a5a30;border-bottom:1px solid #fde9c8}
+  .banner b{font-weight:600}
+  .banner code{font-size:11.5px;background:#fdf0c8;padding:0 4px;border-radius:3px}
+
+  /* Empty */
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;flex:1;padding:60px 24px;text-align:center;color:var(--muted)}
+  .empty p{font-size:13.5px;max-width:380px;line-height:1.7}
+  .empty code{font-size:12px;background:var(--code);padding:1px 5px;border-radius:3px;color:var(--ink2)}
+
+  /* Mobile */
+  @media(max-width:700px){.side{display:none}}
+  @media(max-width:640px){tbody td,thead th{padding:6px 8px}.sr input{width:130px}.btn span{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="brand">
+      <div class="eye">ICML 2026</div>
+      <h1>관심 페이퍼</h1>
+      <p id="brand-sub">불러오는 중…</p>
+    </div>
+    <nav class="sidenav" id="sidenav"></nav>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div id="setup-banner" class="banner" style="display:none"></div>
+    <div class="topbar">
+      <div class="ttl">
+        <h2 id="view-title">전체 일정</h2>
+        <p id="summary-line">불러오는 중…</p>
+      </div>
+      <span class="sdot loading" id="dot"></span>
+      <span id="stxt">연결 중</span>
+      <div class="sr">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="q" placeholder="제목·주제·번호 검색">
+      </div>
+      <button class="btn" id="refresh-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span>새로고침</span>
+      </button>
+      <button class="btn" id="ics-btn" title="Google 캘린더·Outlook에 가져오기">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>캘린더</span>
+      </button>
+      <button class="btn" id="csv-btn">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>CSV</span>
+      </button>
+    </div>
+
+    <div class="filterbar">
+      <span class="fcap">형식</span>
+      <button class="chip" data-t="Oral">Oral</button>
+      <button class="chip" data-t="Spotlight">Spotlight</button>
+      <button class="chip" data-t="Poster">Poster</button>
+      <button class="chip" data-t="Workshop">Workshop</button>
+      <button class="clr" id="clr-btn" style="display:none">초기화</button>
+      <div class="stats-strip" id="stats"></div>
+    </div>
+
+    <div class="scroll" id="content"></div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   설정 (둘 중 하나만 채우세요)
+
+   ① Apps Script 방식 (가장 안정적, 실시간)
+      Code.gs 배포 후 받은 URL → API_URL에 붙여 넣기
+
+   ② 구글 시트 직접 읽기 (읽기 전용)
+      시트 공유 설정: "링크가 있는 모든 사용자 - 뷰어"
+      → SHEET_ID와 탭 번호(SHEET_GID)만 설정하면 됩니다.
+================================================================ */
+const API_URL   = "";
+const SHEET_ID  = "1OUtrtxPGKyc5Q3nIGtapkbm0AWYWYjbo";
+const SHEET_GID = "0";    // 첫 번째 탭=0. URL 끝 #gid=숫자 참고
+const REFRESH_MS = 60000; // 0이면 자동 새로고침 없음
+
+/* ================================================================ */
+
+const NAMES = [
+  "송채희","이금용","박동현","홍건하","안성규","Saad Mourafik","김재훈","김강현",
+  "박범훈","조성원","박성준","송지훈","서경국","신상훈","이승아","장유진","여상엽","김범준","Willmer Rafell","허은우"
+];
+const TYPE_ORDER = {Oral:0,Spotlight:1,Poster:2,Workshop:3};
+const TYPE_DOT   = {Oral:"#e0563f",Spotlight:"#d39b27",Poster:"#3f86ad",Workshop:"#7a63b0"};
+const MONTHS = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+
+const COL_MAP = {
+  student: ["학생","student","name","이름"],
+  type:    ["형식","type","발표","presentation"],
+  paperNo: ["번호","no","number","고유"],
+  task:    ["주제","task","topic"],
+  title:   ["제목","title","paper"],
+  date:    ["날짜","date"],
+  day:     ["요일","day"],
+  time:    ["시간","time"],
+  location:["위치","location","세션","session","venue","hall"],
+  link:    ["링크","link","url","https"],
+};
+
+let allRows      = [];
+let filtered     = [];
+let sort         = { key:"date", dir:"asc" };
+let typeFilter   = new Set();
+let studentFilter= "all";
+let query        = "";
+let headers      = {};
+let conflictIdxs = new Set();
+
+/* ── CSV parse ── */
+function parseCsv(text) {
+  const rows=[];let cells=[];let cur="";let inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(c==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(c===','&&!inQ){cells.push(cur);cur="";}
+    else if((c==='\n'||c==='\r')&&!inQ){
+      cells.push(cur);cur="";
+      if(cells.some(v=>v.trim()))rows.push(cells.map(v=>v.trim()));
+      cells=[];if(c==='\r'&&text[i+1]==='\n')i++;
+    }else cur+=c;
+  }
+  if(cur||cells.length){cells.push(cur);if(cells.some(v=>v.trim()))rows.push(cells.map(v=>v.trim()));}
+  return rows;
+}
+function detectHeaders(row) {
+  const h={};
+  row.forEach((col,idx)=>{
+    const lower=col.toLowerCase();
+    for(const[f,kws]of Object.entries(COL_MAP)){if(!h[f]&&kws.some(k=>lower.includes(k)))h[f]=idx;}
+  });
+  return h;
+}
+function rowToObj(cells,h) {
+  const g=k=>h[k]!==undefined?(cells[h[k]]||""):"";
+  return {student:g("student"),type:g("type"),paperNo:g("paperNo"),task:g("task"),
+    title:g("title"),date:g("date"),day:g("day"),time:g("time"),location:g("location"),link:g("link")};
+}
+
+/* ── Helpers ── */
+function dateNum(s){
+  if(!s)return 1e9;
+  const m=String(s).toLowerCase().match(/([a-z]{3,})\s*\.?\s*0*(\d{1,2})/);
+  if(m&&MONTHS[m[1].slice(0,3)])return MONTHS[m[1].slice(0,3)]*100+parseInt(m[2],10);
+  const n=s.replace(/\D/g,"");return n?parseInt(n.slice(0,6),10):1e9;
+}
+function timeNum(s){
+  if(!s)return 1e9;
+  const m=String(s).match(/(\d{1,2}):(\d{2})/);
+  return m?+m[1]*60+ +m[2]:1e9;
+}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function pill(t){
+  if(!t)return'<span class="dim">—</span>';
+  return`<span class="pill ${esc(t)}"><span class="dot ${esc(t)}"></span>${esc(t)}</span>`;
+}
+function arr(key){return sort.key===key?`<span class="arr">${sort.dir==="asc"?"↑":"↓"}</span>`:`<span class="arr">↕</span>`}
+function th(key,label){return`<th class="srt" data-k="${key}">${label}${arr(key)}</th>`}
+
+const extI=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+const warnI=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
+function schedCell(r, isConflict) {
+  const d=r.date, dy=r.day, t=r.time;
+  if(!d&&!t)return'<span class="dim">—</span>';
+  const datePart=d+(dy?` (${dy})`:'');
+  const timePart=t?`${t} KST`:'';
+  return `<div class="sched-date">${esc(datePart)}</div>`
+    +(timePart?`<div class="sched-time">${esc(timePart)}</div>`:'')
+    +(isConflict?`<div class="conflict">${warnI} 시간대 겹침</div>`:'');
+}
+
+/* ── Conflict detection ── */
+function detectConflicts(rows) {
+  const cs=new Set();
+  const byDate={};
+  rows.forEach((r,i)=>{if(!r.date)return;(byDate[r.date]=byDate[r.date]||[]).push({r,i});});
+  for(const day of Object.values(byDate)){
+    for(let a=0;a<day.length;a++){
+      for(let b=a+1;b<day.length;b++){
+        const ta=timeNum(day[a].r.time),tb=timeNum(day[b].r.time);
+        if(ta!==1e9&&tb!==1e9&&Math.abs(ta-tb)<45){cs.add(day[a].i);cs.add(day[b].i);}
+      }
+    }
+  }
+  return cs;
+}
+
+/* ── Status ── */
+function setStatus(st,txt){
+  document.getElementById("dot").className="sdot "+st;
+  document.getElementById("stxt").textContent=txt;
+}
+
+/* ── Data loading ── */
+async function loadFromApps(){
+  const r=await fetch(API_URL+"?action=list");
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();return(j.rows||[]).filter(r=>r.title||r.student||r.paperNo);
+}
+async function loadFromSheet(){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
+  const r=await fetch(url);if(!r.ok)throw new Error("HTTP "+r.status);
+  const text=await r.text();const rows=parseCsv(text);if(rows.length<2)return[];
+  headers=detectHeaders(rows[0]);
+  return rows.slice(1).map(cells=>rowToObj(cells,headers)).filter(r=>r.title||r.student||r.paperNo);
+}
+async function load(){
+  setStatus("loading","불러오는 중…");
+  try{
+    if(API_URL)allRows=await loadFromApps();
+    else if(SHEET_ID)allRows=await loadFromSheet();
+    else{allRows=[];setStatus("err","URL 미설정");showSetupBanner();render();return;}
+    conflictIdxs=detectConflicts(allRows);
+    setStatus("ok","연결됨 · "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}));
+    renderNav();render();
+  }catch(e){setStatus("err","불러오기 실패");console.error(e);showError(e);}
+}
+function showSetupBanner(){
+  const b=document.getElementById("setup-banner");b.style.display="block";
+  b.innerHTML=`⚠ <b>설정 필요</b> — 파일 상단 <code>API_URL</code> 또는 <code>SHEET_ID</code>를 입력해 주세요.`;
+}
+function showError(e){
+  document.getElementById("content").innerHTML=`<div class="empty">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d3dde9" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p>데이터를 불러오지 못했습니다.<br>구글 시트 공유 설정을 확인하거나 <code>API_URL</code>을 설정하세요.</p>
+    <p style="font-size:11px;color:#b0bec5;margin-top:4px">${e.message||e}</p>
+  </div>`;
+}
+
+/* ── Sidebar ── */
+function renderNav(){
+  const counts={};NAMES.forEach(n=>counts[n]=allRows.filter(r=>r.student===n).length);
+  const total=allRows.length;
+  const ic=(active,key,label,badge)=>`<button class="snitem ${active?'active':''}" data-view="${esc(key)}">
+    <span class="snlbl">${esc(label)}</span>${badge>0?`<span class="snbadge">${badge}</span>`:''}
+  </button>`;
+  let html=ic(studentFilter==="all","all","전체 일정",total);
+  html+=`<div class="snlabel">학생</div>`;
+  NAMES.forEach(n=>html+=ic(studentFilter===n,n,n,counts[n]));
+  const nav=document.getElementById("sidenav");nav.innerHTML=html;
+  nav.querySelectorAll(".snitem").forEach(b=>b.onclick=()=>{
+    studentFilter=b.dataset.view;renderNav();render();
+  });
+  document.getElementById("brand-sub").textContent=`${total}편 등록됨`;
+}
+
+/* ── Filter & sort ── */
+function applyFilter(){
+  const q=query.trim().toLowerCase();
+  filtered=allRows.filter(r=>{
+    if(studentFilter!=="all"&&r.student!==studentFilter)return false;
+    if(typeFilter.size&&!typeFilter.has(r.type))return false;
+    if(q){const hay=`${r.student} ${r.type} ${r.paperNo} ${r.task} ${r.title} ${r.location}`.toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  });
+  const val=r=>{
+    if(sort.key==="date")return dateNum(r.date)*10000+timeNum(r.time);
+    if(sort.key==="type")return TYPE_ORDER[r.type]??9;
+    return String(r[sort.key]||"").toLowerCase();
+  };
+  filtered.sort((a,b)=>{
+    const va=val(a),vb=val(b);
+    const cmp=(typeof va==="number"&&typeof vb==="number")?va-vb:String(va).localeCompare(String(vb),"ko");
+    return sort.dir==="asc"?cmp:-cmp;
+  });
+}
+
+/* ── Stats ── */
+function renderStats(){
+  const out=["Oral","Spotlight","Poster","Workshop"].map(t=>{
+    const n=filtered.filter(r=>r.type===t).length;
+    if(!n)return'';
+    return`<span class="sstat"><span class="ssdot" style="background:${TYPE_DOT[t]}"></span>${t}: ${n}</span>`;
+  }).join('');
+  document.getElementById("stats").innerHTML=out;
+}
+
+/* ── Date group rows ── */
+function buildRows(rows){
+  if(sort.key!=="date")return rows.map(r=>({kind:"row",r,gi:allRows.indexOf(r)}));
+  const out=[];let lastDate='';
+  rows.forEach(r=>{
+    if(r.date&&r.date!==lastDate){
+      lastDate=r.date;
+      const dy=r.day?` (${r.day})`:'';
+      out.push({kind:"group",label:r.date+dy});
+    }
+    out.push({kind:"row",r,gi:allRows.indexOf(r)});
+  });
+  return out;
+}
+
+/* ── Render ── */
+function render(){
+  applyFilter();renderStats();
+  const el=document.getElementById("content");
+  const isAll=studentFilter==="all";
+  document.getElementById("view-title").textContent=isAll?"전체 일정":studentFilter;
+  const conflicts=conflictIdxs.size?`· ⚠ ${conflictIdxs.size}건 겹침`:'';
+  document.getElementById("summary-line").textContent=`${filtered.length}편 ${conflicts} · 헤더 클릭 정렬`;
+
+  if(filtered.length===0){
+    el.innerHTML=`<div class="empty"><p>${allRows.length===0
+      ?"아직 입력된 페이퍼가 없습니다."
+      :"조건에 맞는 페이퍼가 없습니다. 필터를 바꿔 보세요."}</p></div>`;
+    return;
+  }
+
+  const rows=buildRows(filtered);
+  const cols=isAll?8:7;
+
+  el.innerHTML=`<table><thead><tr>
+    ${isAll?th("student","학생"):''}${th("type","형식")}${th("paperNo","번호")}
+    ${th("task","주제")}${th("title","페이퍼 명")}
+    ${th("date","일정")}${th("location","위치 / 세션")}<th>링크</th>
+  </tr></thead><tbody>
+  ${rows.map(item=>{
+    if(item.kind==="group")
+      return`<tr class="dg"><td colspan="${cols}">${esc(item.label)}</td></tr>`;
+    const r=item.r, gi=item.gi, isC=conflictIdxs.has(gi);
+    return`<tr>
+      ${isAll?`<td class="nm">${esc(r.student)||'<span class="dim">—</span>'}</td>`:''}
+      <td>${pill(r.type)}</td>
+      <td class="num">${esc(r.paperNo)||'<span class="dim">—</span>'}</td>
+      <td style="color:var(--ink2)">${esc(r.task)||'<span class="dim">—</span>'}</td>
+      <td style="max-width:260px;line-height:1.45">${esc(r.title)||'<span class="dim">—</span>'}</td>
+      <td>${schedCell(r,isC)}</td>
+      <td style="max-width:200px;color:var(--ink2)">${esc(r.location)||'<span class="dim">—</span>'}</td>
+      <td>${r.link?`<a class="ext" href="${esc(r.link)}" target="_blank" rel="noreferrer">열기 ${extI}</a>`:'<span class="dim">—</span>'}</td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>`;
+
+  el.querySelectorAll("th.srt").forEach(t=>t.onclick=()=>{
+    const k=t.dataset.k;
+    sort=sort.key===k?{key:k,dir:sort.dir==="asc"?"desc":"asc"}:{key:k,dir:"asc"};
+    render();
+  });
+}
+
+/* ── ICS export ── */
+function exportIcs(){
+  const pad2=n=>String(n).padStart(2,'0');
+  function dt(dateStr,timeStr){
+    if(!dateStr)return'';
+    const dm=dateStr.match(/([a-zA-Z]+)\s*(\d+)/);if(!dm)return'';
+    const month=MONTHS[dm[1].toLowerCase().slice(0,3)];if(!month)return'';
+    const day=parseInt(dm[2],10);
+    const tm=timeStr?timeStr.match(/(\d+):(\d+)/):null;
+    const h=tm?parseInt(tm[1],10):9, m=tm?parseInt(tm[2],10):0;
+    return`20260${pad2(month)}${pad2(day)}T${pad2(h)}${pad2(m)}00`;
+  }
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ICML2026 Viewer//KR','CALSCALE:GREGORIAN'];
+  filtered.forEach((r,i)=>{
+    const dtstart=dt(r.date,r.time);if(!dtstart)return;
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:icml2026-${i}-${Date.now()}@viewer`,
+      `DTSTART;TZID=Asia/Seoul:${dtstart}`,
+      `DURATION:PT2H`,
+      `SUMMARY:${(r.title||r.task||'페이퍼').replace(/[,;\\]/g,'\\$&')}`,
+      `DESCRIPTION:학생: ${r.student}\\n형식: ${r.type}\\n번호: ${r.paperNo}`,
+      ...(r.location?[`LOCATION:${r.location.replace(/[,;\\]/g,'\\$&')}`]:[]),
+      ...(r.link?[`URL:${r.link}`]:[]),
+      'END:VEVENT'
+    );
+  });
+  lines.push('END:VCALENDAR');
+  const blob=new Blob([lines.join('\r\n')],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ICML2026_일정.ics';a.click();
+}
+
+/* ── CSV export ── */
+function exportCsv(){
+  const head=["학생","형식","번호","주제","페이퍼명","날짜","요일","시간(KST)","위치/세션","링크"];
+  const cell=v=>`"${String(v||"").replace(/"/g,'""')}"`;
+  const lines=[head.map(cell).join(",")];
+  filtered.forEach(r=>lines.push(
+    [r.student,r.type,r.paperNo,r.task,r.title,r.date,r.day,r.time,r.location,r.link].map(cell).join(",")
+  ));
+  const blob=new Blob(["﻿"+lines.join("\n")],{type:"text/csv;charset=utf-8;"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ICML2026_페이퍼.csv";a.click();
+}
+
+/* ── Events ── */
+document.getElementById("q").oninput=e=>{query=e.target.value;render();};
+document.getElementById("refresh-btn").onclick=load;
+document.getElementById("ics-btn").onclick=exportIcs;
+document.getElementById("csv-btn").onclick=exportCsv;
+
+document.querySelectorAll(".chip[data-t]").forEach(c=>c.onclick=()=>{
+  const t=c.dataset.t;typeFilter.has(t)?typeFilter.delete(t):typeFilter.add(t);
+  document.querySelectorAll(".chip[data-t]").forEach(ch=>
+    ch.className="chip"+(typeFilter.has(ch.dataset.t)?" on "+ch.dataset.t:"")
+  );
+  document.getElementById("clr-btn").style.display=typeFilter.size?"":"none";
+  render();
+});
+document.getElementById("clr-btn").onclick=()=>{
+  typeFilter.clear();
+  document.querySelectorAll(".chip").forEach(c=>c.className="chip");
+  document.getElementById("clr-btn").style.display="none";
+  render();
+};
+
+load();
+if(REFRESH_MS>0)setInterval(load,REFRESH_MS);
+</script>
+</body>
+</html>
