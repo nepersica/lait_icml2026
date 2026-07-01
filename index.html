@@ -1,366 +1,597 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>ICML 2026 관심 페이퍼</title>
 <style>
-  :root{
-    --ink:#1f2937; --ink2:#33415c; --slate:#475569; --muted:#94a3b8;
-    --line:#e2e8f0; --line2:#eef2f6; --bg:#f8fafc; --card:#ffffff;
-    --accent:#0f172a; --link:#0284c7;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;height:100%}
-  body{background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-    -webkit-font-smoothing:antialiased;font-size:14px}
-  .serif{font-family:Georgia,"Times New Roman","Nanum Myeongjo",serif}
-  .app{display:flex;height:100vh;overflow:hidden}
+:root{
+  --ink:#1f2937;--ink2:#334155;--muted:#94a3b8;
+  --ground:#f1f5f9;--surface:#fff;--accent:#0f172a;
+  --border:#e2e8f0;--line2:#f0f4f8;--link:#0284c7;
+  --Oral-bg:#fce8e6;--Oral-c:#b4452f;--Oral-b:#f3c9c1;
+  --Spotlight-bg:#faf0d6;--Spotlight-c:#9a6b12;--Spotlight-b:#ecd9a6;
+  --Poster-bg:#deecf3;--Poster-c:#2d6b8c;--Poster-b:#bcd9e7;
+  --Workshop-bg:#e9e3f4;--Workshop-c:#5e4a93;--Workshop-b:#d3c6ea;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--ground);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-size:14px;-webkit-font-smoothing:antialiased}
+.app{display:flex;height:100vh;overflow:hidden}
 
-  /* sidebar */
-  .side{width:256px;flex:0 0 256px;background:var(--card);border-right:1px solid var(--line);
-    display:flex;flex-direction:column}
-  .brand{padding:20px 20px;border-bottom:1px solid var(--line2)}
-  .brand .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  .brand h1{margin:4px 0 2px;font-size:20px;color:var(--accent)}
-  .brand p{margin:0;font-size:12px;color:var(--muted)}
-  .nav{flex:1;overflow:auto;padding:12px}
-  .navlabel{padding:14px 12px 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#cbd5e1;font-weight:600}
-  .item{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;margin-bottom:2px;border:0;background:none;
-    border-radius:9px;text-align:left;font-size:14px;color:var(--slate);cursor:pointer}
-  .item:hover{background:#f1f5f9}
-  .item.active{background:var(--accent);color:#fff}
-  .item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .item.accent .lbl{font-weight:600;color:var(--ink)}
-  .item.active.accent .lbl,.item.active .lbl{color:#fff}
-  .badge{font-size:11px;border-radius:999px;padding:1px 7px;background:#f1f5f9;color:#64748b}
-  .item.active .badge{background:rgba(255,255,255,.2);color:#fff}
+/* ── Sidebar ── */
+.side{width:240px;flex:0 0 240px;background:var(--surface);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden}
+.brand{padding:16px;border-bottom:1px solid var(--line2)}
+.brand .eye{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#64748b}
+.brand h1{font-size:18px;font-weight:700;color:var(--accent);margin:4px 0 2px}
+.brand p{font-size:11.5px;color:var(--muted)}
+.status-row{display:flex;align-items:center;gap:5px;margin-top:6px}
+.sdot{width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0}
+.sdot.ok{background:#22c55e}.sdot.err{background:#ef4444}
+.sdot.loading{background:#f59e0b;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#stxt{font-size:11px;color:var(--muted)}
+.modetabs{display:flex;border-radius:8px;border:1px solid var(--border);overflow:hidden;margin-top:10px}
+.modetab{flex:1;border:0;padding:6px 0;font-size:12px;font-weight:600;cursor:pointer;
+  background:#f8fafc;color:var(--muted)}
+.modetab:hover:not(.on){background:#f1f5f9}
+.modetab.on{background:var(--accent);color:#fff}
+.nav{flex:1;overflow-y:auto;padding:8px}
+.navlabel{padding:12px 10px 4px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c8d5e2}
+.item{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;margin-bottom:1px;
+  border:0;background:none;border-radius:8px;text-align:left;font-size:13px;color:#475569;cursor:pointer}
+.item:hover{background:#f1f5f9}
+.item.active{background:var(--accent);color:#fff}
+.item .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{font-size:10.5px;border-radius:999px;padding:1px 6px;background:#f1f5f9;color:#64748b}
+.item.active .badge{background:rgba(255,255,255,.2);color:#fff}
+.prof-item .lbl{font-weight:600}
 
-  .main{flex:1;min-width:0;display:flex;flex-direction:column}
-  .topbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--line)}
-  .topbar h2{margin:0;font-size:24px;color:var(--accent)}
-  .topbar .sub{font-size:13px;color:var(--muted)}
-  .grow{margin-right:auto}
-  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;color:var(--slate);
-    padding:8px 13px;border-radius:9px;font-size:13px;cursor:pointer}
-  .btn:hover{background:#f8fafc}
-  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500}
-  .btn.primary:hover{background:#1e293b}
-  .search{position:relative}
-  .search input{width:220px;padding:8px 12px 8px 30px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff}
-  .search input:focus{outline:none;border-color:#94a3b8}
-  .search svg{position:absolute;left:9px;top:9px;color:var(--muted)}
-  .filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:11px 24px;background:#fff;border-bottom:1px solid var(--line2)}
-  .filterbar .cap{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  .chip{border:1px solid var(--line);background:#fff;color:#94a3b8;border-radius:999px;padding:3px 11px;font-size:12px;font-weight:500;cursor:pointer}
-  .chip:hover{color:#475569}
-  .pill,.chip.on{display:inline-flex;align-items:center;gap:6px}
-  .pill{border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;border:1px solid}
-  .dot{width:6px;height:6px;border-radius:999px;display:inline-block}
-  .pill.Oral,.chip.on.Oral{background:#fce8e6;color:#b4452f;border-color:#f3c9c1}
-  .pill.Spotlight,.chip.on.Spotlight{background:#faf0d6;color:#9a6b12;border-color:#ecd9a6}
-  .pill.Poster,.chip.on.Poster{background:#deecf3;color:#2d6b8c;border-color:#bcd9e7}
-  .pill.Workshop,.chip.on.Workshop{background:#e9e3f4;color:#5e4a93;border-color:#d3c6ea}
-  .dot.Oral{background:#e0563f}.dot.Spotlight{background:#d39b27}.dot.Poster{background:#3f86ad}.dot.Workshop{background:#7a63b0}
+/* ── Main ── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 20px;
+  background:var(--surface);border-bottom:1px solid var(--border)}
+.ttl{margin-right:auto}
+.ttl h2{font-size:16px;font-weight:700;color:var(--accent)}
+.ttl p{font-size:11.5px;color:var(--muted);margin-top:2px}
+.savebadge{font-size:12px;color:#059669}
+.btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:#fff;color:#475569;
+  padding:6px 11px;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--line2)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#1e293b}
+.sr{position:relative}
+.sr svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--muted)}
+.sr input{padding:6px 10px 6px 28px;border:1px solid var(--border);border-radius:7px;font-size:13px;width:180px;background:#fff}
+.sr input:focus{outline:none;border-color:#94a3b8}
 
-  .scroll{flex:1;min-height:0;overflow:auto}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  thead th{position:sticky;top:0;z-index:5;background:#f8fafcee;backdrop-filter:blur(4px);
-    text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#64748b;font-weight:600;
-    padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
-  thead th.sortable{cursor:pointer;user-select:none}
-  thead th.sortable:hover{color:#1e293b}
-  thead th .arr{opacity:.4;margin-left:3px}
-  tbody td{padding:9px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
-  tbody tr:hover{background:#f8fafc99}
-  .nm{font-weight:600;color:#334155;background:none;border:0;cursor:pointer;padding:0}
-  .nm:hover{text-decoration:underline}
-  .num{font-variant-numeric:tabular-nums;color:#64748b}
-  .dim{color:#cbd5e1}
-  a.link{color:var(--link);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
-  a.link:hover{text-decoration:underline}
+/* ── Filter bar ── */
+.filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:8px 20px;
+  background:#fff;border-bottom:1px solid var(--line2)}
+.fcap{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.chip{border:1px solid var(--border);background:#fff;color:#94a3b8;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;cursor:pointer}
+.chip.on.Oral{background:var(--Oral-bg);color:var(--Oral-c);border-color:var(--Oral-b)}
+.chip.on.Spotlight{background:var(--Spotlight-bg);color:var(--Spotlight-c);border-color:var(--Spotlight-b)}
+.chip.on.Poster{background:var(--Poster-bg);color:var(--Poster-c);border-color:var(--Poster-b)}
+.chip.on.Workshop{background:var(--Workshop-bg);color:var(--Workshop-c);border-color:var(--Workshop-b)}
+.clrbtn{font-size:12px;color:var(--muted);border:0;background:none;cursor:pointer;text-decoration:underline}
+.stats-strip{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sstat{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.ssdot{width:5px;height:5px;border-radius:50%}
 
-  /* editable student table */
-  .cellinput{width:100%;border:0;background:none;padding:5px 6px;border-radius:6px;font-size:14px;color:#334155;font-family:inherit}
-  .cellinput::placeholder{color:#cbd5e1}
-  .cellinput:focus{outline:none;background:#fff;box-shadow:0 0 0 1px #cbd5e1}
-  .typecell{position:relative}
-  .typebtn{display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%;border:0;background:none;
-    padding:5px 6px;border-radius:6px;cursor:pointer;font-size:13px;color:#94a3b8}
-  .typebtn:hover{background:#f1f5f9}
-  .menu{position:absolute;z-index:30;margin-top:4px;width:150px;background:#fff;border:1px solid var(--line);
-    border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.12);padding:5px}
-  .menu button{display:flex;align-items:center;gap:7px;width:100%;border:0;background:none;padding:7px 8px;border-radius:7px;cursor:pointer;font-size:13px;color:#475569}
-  .menu button:hover{background:#f1f5f9}
-  .del{border:0;background:none;color:#cbd5e1;cursor:pointer;padding:5px;border-radius:6px}
-  .del:hover{background:#fee2e2;color:#ef4444}
+/* ── Table ── */
+.scroll{flex:1;min-height:0;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;z-index:5;background:#f4f7fbf0;backdrop-filter:blur(4px);
+  text-align:left;padding:9px 11px;white-space:nowrap;border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+thead th.srt{cursor:pointer;user-select:none}
+thead th.srt:hover{color:var(--ink)}
+.arr{opacity:.3;margin-left:2px;font-size:9px}
+tbody td{padding:8px 11px;border-bottom:1px solid var(--line2);vertical-align:top}
+tbody tr:hover td{background:#f8fafc60}
+tr.dg td{padding:5px 11px;background:#edf2f8;font-size:10.5px;font-weight:700;color:#334155;
+  border-top:2px solid #c8d6e8;border-bottom:1px solid var(--border);
+  position:sticky;top:39px;z-index:4}
 
-  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:80px 24px;color:#64748b}
-  .empty .icon{width:48px;height:48px;border-radius:999px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8}
-  .empty p{max-width:360px;margin:0;font-size:14px}
+/* Cells */
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 8px;
+  font-size:11px;font-weight:500;border:1px solid;white-space:nowrap}
+.dot{width:5px;height:5px;border-radius:50%}
+.pill.Oral{background:var(--Oral-bg);color:var(--Oral-c);border-color:var(--Oral-b)}
+.pill.Spotlight{background:var(--Spotlight-bg);color:var(--Spotlight-c);border-color:var(--Spotlight-b)}
+.pill.Poster{background:var(--Poster-bg);color:var(--Poster-c);border-color:var(--Poster-b)}
+.pill.Workshop{background:var(--Workshop-bg);color:var(--Workshop-c);border-color:var(--Workshop-b)}
+.dot.Oral{background:#e0563f}.dot.Spotlight{background:#d39b27}.dot.Poster{background:#3f86ad}.dot.Workshop{background:#7a63b0}
+.dim{color:#c8d5e0}
+.nmbtn{font-weight:600;color:#334155;background:none;border:0;cursor:pointer;padding:0;white-space:nowrap;font-size:13px}
+.nmbtn:hover{text-decoration:underline}
+.num{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+a.ext{color:var(--link);text-decoration:none;display:inline-flex;align-items:center;gap:3px;font-size:12.5px}
+a.ext:hover{text-decoration:underline}
+.sched-date{font-weight:500;color:#334155;white-space:nowrap}
+.sched-time{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.conflict{margin-top:3px;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;
+  color:#d97706;background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:1px 6px}
 
-  .status{font-size:12px;color:#059669}
-  .banner{padding:9px 24px;font-size:12.5px;background:#fffbeb;color:#92704e;border-bottom:1px solid #fde9c8}
-  .banner b{color:#7a5a32}
-  .mobsel{display:none;padding:12px;background:#fff;border-bottom:1px solid var(--line)}
-  .mobsel select{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px}
-  @media(max-width:760px){ .side{display:none} .mobsel{display:block} .search input{width:150px} }
+/* ── Editable table ── */
+.cellinput{width:100%;border:0;background:none;padding:4px 6px;border-radius:6px;
+  font-size:13px;color:#334155;font-family:inherit}
+.cellinput::placeholder{color:#c8d5e0}
+.cellinput:focus{outline:none;background:#fff;box-shadow:0 0 0 1.5px #cbd5e1}
+.typecell{position:relative}
+.typebtn{display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%;
+  border:0;background:none;padding:4px 6px;border-radius:6px;cursor:pointer;font-size:12px;color:#94a3b8}
+.typebtn:hover{background:#f1f5f9}
+.menu{position:absolute;z-index:30;margin-top:4px;width:150px;background:#fff;
+  border:1px solid var(--border);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:5px}
+.menu button{display:flex;align-items:center;gap:6px;width:100%;border:0;background:none;
+  padding:7px 8px;border-radius:7px;cursor:pointer;font-size:13px;color:#475569}
+.menu button:hover{background:#f1f5f9}
+.delbtn{border:0;background:none;color:#cbd5e1;cursor:pointer;padding:4px;border-radius:6px}
+.delbtn:hover{background:#fee2e2;color:#ef4444}
+
+/* ── Misc ── */
+.banner{padding:8px 20px;font-size:12px;background:#fffbeb;color:#7a5a30;border-bottom:1px solid #fde9c8}
+.banner b{font-weight:600}.banner code{background:#fdf0c8;padding:0 4px;border-radius:3px;font-size:11px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  flex:1;padding:60px 24px;text-align:center;color:var(--muted)}
+.empty p{font-size:13.5px;max-width:380px;line-height:1.7}
+.mobsel{display:none;padding:10px 16px;background:#fff;border-bottom:1px solid var(--border)}
+.mobsel select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+@media(max-width:700px){.side{display:none}.mobsel{display:block}}
+@media(max-width:580px){tbody td,thead th{padding:6px 8px}.sr input{width:130px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <aside class="side">
-    <div class="brand">
-      <div class="eyebrow">ICML 2026</div>
-      <h1 class="serif">관심 페이퍼</h1>
-      <p>학생별 발표 일정 모아보기</p>
+
+<aside class="side">
+  <div class="brand">
+    <div class="eye">ICML 2026</div>
+    <h1>관심 페이퍼</h1>
+    <p id="brand-sub">불러오는 중…</p>
+    <div class="status-row">
+      <span class="sdot loading" id="dot"></span>
+      <span id="stxt">연결 중</span>
     </div>
-    <nav class="nav" id="nav"></nav>
-  </aside>
-  <main class="main">
-    <div class="mobsel"><select id="mobsel"></select></div>
-    <div id="banner"></div>
-    <div id="content" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
-  </main>
+    <div class="modetabs">
+      <button class="modetab on" id="tab-view" onclick="setMode('view')">보기</button>
+      <button class="modetab" id="tab-edit" onclick="setMode('edit')">편집</button>
+    </div>
+  </div>
+  <nav class="nav" id="nav"></nav>
+</aside>
+
+<main class="main">
+  <div class="mobsel"><select id="mobsel"></select></div>
+  <div id="banner"></div>
+  <div id="content" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
+</main>
 </div>
 
 <script>
-/* ============================================================
-   설정: 구글 시트 백엔드(Apps Script 웹앱) 주소를 여기에 붙여 넣으세요.
-   비워두면 이 브라우저에만 저장되는 "로컬 모드"로 동작합니다.
-   ============================================================ */
-const API_URL = ""; // 예: "https://script.google.com/macros/s/AKfyc.../exec"
+/* ================================================================
+   설정
+   API_URL  : Apps Script 배포 URL (읽기+쓰기)
+   SHEET_ID : 구글 시트 ID (API_URL 없을 때 읽기 전용)
+================================================================ */
+const API_URL   = "";
+const SHEET_ID  = "1OUtrtxPGKyc5Q3nIGtapkbm0AWYWYjbo";
+const SHEET_GID = "0";
+const REFRESH_MS = 60000;
 
+const PROF  = ["유재준 교수님"];
 const NAMES = ["송채희","이금용","박동현","홍건하","안성규","Saad Mourafik","김재훈","김강현",
   "박범훈","조성원","박성준","송지훈","서경국","신상훈","이승아","장유진","여상엽","김범준","Willmer Rafell","허은우"];
-const TYPES = ["Oral","Spotlight","Poster","Workshop"];
+const ALL   = [...PROF, ...NAMES];
+
+const TYPES      = ["Oral","Spotlight","Poster","Workshop"];
 const TYPE_ORDER = {Oral:0,Spotlight:1,Poster:2,Workshop:3};
+const TYPE_DOT   = {Oral:"#e0563f",Spotlight:"#d39b27",Poster:"#3f86ad",Workshop:"#7a63b0"};
+const MONTHS     = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+const LS_KEY     = "icml2026_rows_v1";
+
+// schedule = virtual field (reads/writes date+day+time internally)
 const COLDEF = [
-  {f:"paperNo",label:"고유 번호",ph:"예: 12345",w:"110px"},
-  {f:"task",label:"주제 (Task)",ph:"예: Robustness",w:"160px"},
-  {f:"title",label:"페이퍼 명 (Title)",ph:"논문 제목",w:"320px"},
-  {f:"date",label:"날짜",ph:"Jul 14",w:"110px"},
-  {f:"day",label:"요일",ph:"Tue",w:"70px"},
-  {f:"time",label:"시간 (KST)",ph:"03:15",w:"90px"},
-  {f:"location",label:"위치 / 세션",ph:"Poster Session 2, Hall A",w:"260px"},
-  {f:"link",label:"링크",ph:"https://…",w:"220px"},
+  {f:"paperNo",  label:"번호",        ph:"Hall A #1304",                     w:"130px"},
+  {f:"task",     label:"주제",        ph:"Robustness",                       w:"150px"},
+  {f:"title",    label:"페이퍼 명",   ph:"논문 제목",                        w:"280px"},
+  {f:"schedule", label:"일정",        ph:"Thu, Jul 9 • 2:30 PM – 4:15 PM",  w:"240px"},
+  {f:"location", label:"위치 / 세션", ph:"Poster Session 2, Hall A",         w:"200px"},
+  {f:"link",     label:"링크",        ph:"https://…",                        w:"170px"},
 ];
-const MONTHS={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
-const LS_KEY="icml2026_rows_v1";
-const REMOTE=!!API_URL;
 
-let state={ rows:[], view:"all", sort:{key:"date",dir:"asc"}, query:"", tf:new Set(), loading:true, error:null };
-let saveTimers={};
+let state = {rows:[], view:"all", mode:"view", sort:{key:"date",dir:"asc"}, query:"", tf:new Set()};
+let saveTimers = {};
+let conflictIdxs = new Set();
+let lastStatus = {st:"loading", txt:"연결 중"};
 
-/* ---------- data layer ---------- */
-function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
-function blankRow(student){return {id:uid(),student,type:"",paperNo:"",task:"",title:"",date:"",day:"",time:"",location:"",link:"",updatedAt:Date.now()}}
+const REMOTE  = !!API_URL;
+const HAS_GVZ = !!SHEET_ID;
 
-async function apiGet(){ const r=await fetch(API_URL+"?action=list"); const j=await r.json(); return j.rows||[] }
+/* ── Data layer ── */
+function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36) }
+function blankRow(person){ return {id:uid(),student:person,type:"",paperNo:"",task:"",title:"",date:"",day:"",time:"",location:"",link:"",updatedAt:Date.now()} }
+
+async function apiGet(){ const r=await fetch(API_URL+"?action=list"); const j=await r.json(); return j.rows||[]; }
 async function apiPost(action,payload){
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
     body:JSON.stringify(Object.assign({action},payload))});
-  const j=await r.json(); return j.rows||null;
+  return (await r.json()).rows||null;
 }
-function loadLocal(){ try{return JSON.parse(localStorage.getItem(LS_KEY)||"[]")}catch(e){return[]} }
-function saveLocal(){ try{localStorage.setItem(LS_KEY,JSON.stringify(state.rows))}catch(e){} }
+
+const COL_MAP={student:["학생","student","name","이름"],type:["형식","type","발표"],
+  paperNo:["번호","no","number","고유"],task:["주제","task","topic"],
+  title:["제목","title","paper"],date:["날짜","date"],day:["요일","day"],time:["시간","time"],
+  location:["위치","location","세션","session","venue"],link:["링크","link","url","https"]};
+function parseCsv(text){
+  const rows=[];let cells=[];let cur="";let inQ=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(c==='"'){if(inQ&&text[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(c===','&&!inQ){cells.push(cur);cur="";}
+    else if((c==='\n'||c==='\r')&&!inQ){cells.push(cur);cur="";
+      if(cells.some(v=>v.trim()))rows.push(cells.map(v=>v.trim()));
+      cells=[];if(c==='\r'&&text[i+1]==='\n')i++;}
+    else cur+=c;}
+  if(cells.length){cells.push(cur);if(cells.some(v=>v.trim()))rows.push(cells.map(v=>v.trim()));}
+  return rows;
+}
+function detectCsvH(row){const h={};row.forEach((col,idx)=>{const low=col.toLowerCase();
+  for(const[f,kws]of Object.entries(COL_MAP))if(!h[f]&&kws.some(k=>low.includes(k)))h[f]=idx;});return h;}
+function csvObj(cells,h){const g=k=>h[k]!=null?(cells[h[k]]||""):"";
+  return{student:g("student"),type:g("type"),paperNo:g("paperNo"),task:g("task"),
+    title:g("title"),date:g("date"),day:g("day"),time:g("time"),location:g("location"),link:g("link")};}
+async function loadFromSheet(){
+  const r=await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`);
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const rows=parseCsv(await r.text());if(rows.length<2)return[];
+  const h=detectCsvH(rows[0]);
+  return rows.slice(1).map(c=>csvObj(c,h)).filter(r=>r.title||r.student||r.paperNo);
+}
+function loadLocal(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"[]")}catch(e){return[]}}
+function saveLocal(){try{localStorage.setItem(LS_KEY,JSON.stringify(state.rows))}catch(e){}}
 
 async function loadAll(){
-  state.loading=true; render();
-  try{ state.rows = REMOTE ? await apiGet() : loadLocal(); state.error=null; }
-  catch(e){ state.error="데이터를 불러오지 못했습니다. 백엔드 주소를 확인해 주세요."; }
-  state.loading=false; render();
+  setStatus("loading","불러오는 중…");
+  try{
+    if(REMOTE) state.rows=await apiGet();
+    else if(HAS_GVZ) state.rows=await loadFromSheet();
+    else state.rows=loadLocal();
+    conflictIdxs=detectConflicts(state.rows);
+    setStatus("ok","연결됨 · "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}));
+  }catch(e){setStatus("err","불러오기 실패");console.error(e);}
+  render();
 }
-function flash(){ const s=document.getElementById("status"); if(s){s.style.opacity=1; clearTimeout(flash._t); flash._t=setTimeout(()=>{s.style.opacity=0},1500);} }
 
 function upsertRow(row){
   row.updatedAt=Date.now();
   const i=state.rows.findIndex(r=>r.id===row.id);
-  if(i>=0) state.rows[i]=row; else state.rows.push(row);
-  if(REMOTE){ apiPost("upsert",{row}).then(()=>flash()).catch(()=>{}); }
-  else { saveLocal(); flash(); }
+  if(i>=0)state.rows[i]=row;else state.rows.push(row);
+  conflictIdxs=detectConflicts(state.rows);
+  if(REMOTE)apiPost("upsert",{row}).then(()=>flash()).catch(()=>{});
+  else{saveLocal();flash();}
 }
 function deleteRow(id){
   state.rows=state.rows.filter(r=>r.id!==id);
-  if(REMOTE){ apiPost("delete",{id}).then(()=>flash()).catch(()=>{}); } else { saveLocal(); flash(); }
+  conflictIdxs=detectConflicts(state.rows);
+  if(REMOTE)apiPost("delete",{id}).then(()=>flash()).catch(()=>{});else{saveLocal();flash();}
+}
+function flash(){const s=document.getElementById("savebadge");if(s){s.style.opacity=1;clearTimeout(flash._t);flash._t=setTimeout(()=>{s.style.opacity=0},1500);}}
+
+/* ── Helpers ── */
+function dateNum(s){if(!s)return 1e9;const m=String(s).toLowerCase().match(/([a-z]{3,})\s*\.?\s*0*(\d{1,2})/);
+  if(m&&MONTHS[m[1].slice(0,3)])return MONTHS[m[1].slice(0,3)]*100+parseInt(m[2],10);
+  const n=String(s).replace(/\D/g,"");return n?parseInt(n.slice(0,6),10):1e9;}
+function timeNum(s){if(!s)return 1e9;const m=String(s).match(/(\d{1,2}):(\d{2})/);return m?+m[1]*60+ +m[2]:1e9;}
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+function parseSchedule(s){
+  if(!s||!s.trim())return{date:"",day:"",time:""};
+  s=s.trim();
+  const bull=s.match(/^(.*?)[•·](.*)/);
+  if(bull){
+    const left=bull[1].trim(),right=bull[2].trim();
+    const dm=left.match(/^(\w{3})\w*[,\s]+(\w+\s+\d+)/i);
+    const day=dm?dm[1]:"",date=dm?dm[2].replace(/,.*$/,"").trim():left;
+    const tm=right.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    let time="";
+    if(tm){let h=parseInt(tm[1]),ap=(tm[3]||"").toUpperCase();
+      if(ap==="PM"&&h!==12)h+=12;if(ap==="AM"&&h===12)h=0;
+      time=`${String(h).padStart(2,"0")}:${tm[2]}`;}
+    return{date,day,time};
+  }
+  // our own display format "Jul 9 (Thu) · 14:30"
+  const dot=s.match(/^(\w+\s+\d+)(?:\s+\((\w+)\))?(?:\s*[·•]\s*(\d{1,2}:\d{2}))?/i);
+  if(dot)return{date:dot[1]||"",day:dot[2]||"",time:dot[3]||""};
+  return{date:s,day:"",time:""};
+}
+function scheduleDisplay(r){
+  if(!r.date&&!r.time)return"";
+  let s=r.date||"";if(r.day)s+=` (${r.day})`;if(r.time)s+=` · ${r.time}`;return s;
 }
 
-/* ---------- helpers ---------- */
-function rowsOf(name){return state.rows.filter(r=>r.student===name)}
-function counts(){const c={};let t=0;NAMES.forEach(n=>{c[n]=rowsOf(n).length;t+=c[n]});return {c,t}}
-function dateNum(s){ if(!s)return 1e9; const m=String(s).toLowerCase().match(/([a-z]{3,})\s*\.?\s*0*(\d{1,2})/);
-  if(m&&MONTHS[m[1].slice(0,3)]) return MONTHS[m[1].slice(0,3)]*100+parseInt(m[2],10);
-  const n=String(s).replace(/\D/g,""); return n?parseInt(n.slice(0,6),10):1e9; }
-function timeNum(s){ if(!s)return 1e9; const m=String(s).match(/(\d{1,2}):(\d{2})/); return m?+m[1]*60+ +m[2]:1e9 }
-function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-function ic(p){return `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`}
-const I={plus:ic('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
-  trash:ic('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
-  ext:ic('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>'),
-  search:ic('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
-  cal:ic('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
-  dl:ic('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
-  chev:ic('<polyline points="6 9 12 15 18 9"/>'),
-  refresh:ic('<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>')};
-function pill(t){ if(!t) return '<span class="dim">—</span>';
-  return `<span class="pill ${esc(t)}"><span class="dot ${esc(t)}"></span>${esc(t)}</span>` }
+function detectConflicts(rows){
+  const cs=new Set(),byDate={};
+  rows.forEach((r,i)=>{if(!r.date)return;(byDate[r.date]=byDate[r.date]||[]).push({r,i});});
+  for(const day of Object.values(byDate))
+    for(let a=0;a<day.length;a++)for(let b=a+1;b<day.length;b++){
+      const ta=timeNum(day[a].r.time),tb=timeNum(day[b].r.time);
+      if(ta!==1e9&&tb!==1e9&&Math.abs(ta-tb)<45){cs.add(day[a].i);cs.add(day[b].i);}
+    }
+  return cs;
+}
 
-/* ---------- render ---------- */
-function render(){ renderNav(); renderBanner(); renderContent(); }
+function setStatus(st,txt){
+  lastStatus={st,txt};
+  const d=document.getElementById("dot");if(d)d.className="sdot "+st;
+  const t=document.getElementById("stxt");if(t)t.textContent=txt;
+}
+function setMode(m){
+  state.mode=m;
+  document.getElementById("tab-view").className="modetab"+(m==="view"?" on":"");
+  document.getElementById("tab-edit").className="modetab"+(m==="edit"?" on":"");
+  render();
+}
+
+/* ── SVG icons ── */
+const sv=p=>`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const I={
+  plus:sv('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
+  trash:sv('<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+  ext:sv('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>'),
+  search:sv('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
+  cal:sv('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+  dl:sv('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'),
+  chev:sv('<polyline points="6 9 12 15 18 9"/>'),
+  warn:sv('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+  refresh:sv('<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>'),
+};
+function pill(t){if(!t)return'<span class="dim">—</span>';
+  return`<span class="pill ${esc(t)}"><span class="dot ${esc(t)}"></span>${esc(t)}</span>`;}
+function sortArr(key){return state.sort.key===key?`<span class="arr">${state.sort.dir==="asc"?"↑":"↓"}</span>`:`<span class="arr">↕</span>`;}
+function th(key,lbl){return`<th class="srt" data-k="${key}">${lbl}${sortArr(key)}</th>`;}
+function schedCell(r,isC){
+  const d=r.date,dy=r.day,t=r.time;
+  if(!d&&!t)return'<span class="dim">—</span>';
+  return`<div class="sched-date">${esc(d+(dy?` (${dy}`+")":""))}</div>`
+    +(t?`<div class="sched-time">${esc(t)} KST</div>`:"")
+    +(isC?`<div class="conflict">${I.warn} 시간대 겹침</div>`:"");
+}
+
+/* ── Render ── */
+function render(){renderNav();renderBanner();renderContent();}
+
+function renderNav(){
+  const counts={};let total=0;
+  ALL.forEach(n=>{counts[n]=state.rows.filter(r=>r.student===n).length;total+=counts[n];});
+  const item=(key,lbl,cnt,cls="")=>`<button class="item ${state.view===key?"active":""} ${cls}" data-view="${esc(key)}">
+    <span class="lbl">${esc(lbl)}</span>${cnt>0?`<span class="badge">${cnt}</span>`:""}
+  </button>`;
+  let html=item("all","전체 일정",total);
+  html+=`<div class="navlabel">교수님</div>`;
+  PROF.forEach(n=>html+=item(n,n,counts[n],"prof-item"));
+  html+=`<div class="navlabel">학생</div>`;
+  NAMES.forEach(n=>html+=item(n,n,counts[n]));
+  const nav=document.getElementById("nav");nav.innerHTML=html;
+  nav.querySelectorAll(".item").forEach(b=>b.onclick=()=>{state.view=b.dataset.view;render();});
+  const ms=document.getElementById("mobsel");
+  ms.innerHTML=`<option value="all">전체 일정 (${total})</option>`
+    +ALL.map(n=>`<option value="${esc(n)}" ${state.view===n?"selected":""}>${esc(n)} (${counts[n]})</option>`).join("");
+  ms.value=state.view;ms.onchange=()=>{state.view=ms.value;render();};
+  document.getElementById("brand-sub").textContent=`${total}편 등록됨`;
+}
 
 function renderBanner(){
   const b=document.getElementById("banner");
-  if(!REMOTE){ b.innerHTML=`<div class="banner">⚠ <b>로컬 모드</b> — 입력이 이 브라우저에만 저장됩니다. 설정 가이드에 따라 구글 시트 백엔드 주소를 <code>API_URL</code>에 입력해 주세요.</div>`; }
-  else if(state.error){ b.innerHTML=`<div class="banner">⚠ ${esc(state.error)}</div>`; }
-  else b.innerHTML="";
-}
-
-function renderNav(){
-  const {c,t}=counts();
-  const item=(active,key,label,badge,accent,icon)=>`<button class="item ${active?'active':''} ${accent?'accent':''}" data-view="${esc(key)}">
-    ${icon?`<span style="display:flex;color:${active?'#fff':'#94a3b8'}">${icon}</span>`:''}
-    <span class="lbl">${esc(label)}</span>${badge>0?`<span class="badge">${badge}</span>`:''}</button>`;
-  let html=item(state.view==="all","all","전체 일정",t,true,I.cal);
-  html+=`<div class="navlabel">학생</div>`;
-  NAMES.forEach(n=>{ html+=item(state.view===n,n,n,c[n],false,""); });
-  const nav=document.getElementById("nav"); nav.innerHTML=html;
-  nav.querySelectorAll(".item").forEach(b=>b.onclick=()=>{ state.view=b.dataset.view; if(state.view==="all"&&REMOTE) loadAll(); else render(); });
-  const ms=document.getElementById("mobsel");
-  ms.innerHTML=`<option value="all">전체 일정 (${t})</option>`+NAMES.map(n=>`<option value="${esc(n)}" ${state.view===n?'selected':''}>${esc(n)} (${c[n]})</option>`).join("");
-  ms.value=state.view; ms.onchange=()=>{state.view=ms.value;render()};
+  b.innerHTML=(!REMOTE&&!HAS_GVZ)
+    ?`<div class="banner">⚠ <b>로컬 모드</b> — 이 브라우저에만 저장됩니다. <code>API_URL</code>을 설정하면 공유됩니다.</div>`
+    :"";
 }
 
 function renderContent(){
   const el=document.getElementById("content");
-  if(state.loading){ el.innerHTML=`<div class="empty"><p>불러오는 중…</p></div>`; return; }
-  if(state.view==="all") renderCombined(el); else renderStudent(el);
+  (state.mode==="edit"&&state.view!=="all")?renderStudent(el):renderCombined(el);
 }
 
+/* ── Combined (read-only) view ── */
 function renderCombined(el){
   const q=state.query.trim().toLowerCase();
   let rows=state.rows.slice();
-  rows=rows.filter(r=>{
-    if(state.tf.size && !state.tf.has(r.type)) return false;
-    if(q){ const hay=`${r.student} ${r.type} ${r.paperNo} ${r.task} ${r.title} ${r.location}`.toLowerCase(); if(!hay.includes(q)) return false; }
-    return true;
-  });
-  const k=state.sort.key, dir=state.sort.dir==="asc"?1:-1;
-  const val=r=> k==="date"?dateNum(r.date)*10000+timeNum(r.time) : k==="time"?timeNum(r.time) : k==="type"?(TYPE_ORDER[r.type]??9) : String(r[k]||"").toLowerCase();
-  rows.sort((a,b)=>{const va=val(a),vb=val(b); let cmp= (typeof va==="number"&&typeof vb==="number")?va-vb:String(va).localeCompare(String(vb),"ko"); return cmp*dir;});
+  if(state.view!=="all")rows=rows.filter(r=>r.student===state.view);
+  if(state.tf.size)rows=rows.filter(r=>state.tf.has(r.type));
+  if(q)rows=rows.filter(r=>`${r.student} ${r.type} ${r.paperNo} ${r.task} ${r.title} ${r.location}`.toLowerCase().includes(q));
+  const val=r=>state.sort.key==="date"?dateNum(r.date)*10000+timeNum(r.time)
+    :state.sort.key==="type"?(TYPE_ORDER[r.type]??9):String(r[state.sort.key]||"").toLowerCase();
+  rows.sort((a,b)=>{const va=val(a),vb=val(b),c=(typeof va==="number"&&typeof vb==="number")?va-vb:String(va).localeCompare(String(vb),"ko");
+    return state.sort.dir==="asc"?c:-c;});
 
-  const arr=key=> state.sort.key===key?`<span class="arr">${state.sort.dir==="asc"?"↑":"↓"}</span>`:`<span class="arr">↕</span>`;
-  const th=(key,label)=>`<th class="sortable" data-k="${key}">${label}${arr(key)}</th>`;
+  const viewTitle=state.view==="all"?"전체 일정":state.view;
+  const conflictNote=conflictIdxs.size?` · ⚠ ${conflictIdxs.size}건 겹침`:"";
+  const statsHtml=["Oral","Spotlight","Poster","Workshop"].map(t=>{
+    const n=rows.filter(r=>r.type===t).length;if(!n)return"";
+    return`<span class="sstat"><span class="ssdot" style="background:${TYPE_DOT[t]}"></span>${t}: ${n}</span>`;
+  }).join("");
 
-  const head=`
-   <div class="topbar">
-     <div class="grow"><h2 class="serif">전체 일정</h2><div class="sub">${rows.length}편 · 헤더를 눌러 정렬</div></div>
-     <span id="status" class="status" style="opacity:0">저장됨</span>
-     <div class="search">${I.search}<input id="q" placeholder="제목·주제·학생 검색" value="${esc(state.query)}"></div>
-     <button class="btn" id="refresh">${I.refresh} 새로고침</button>
-     <button class="btn" id="csv">${I.dl} CSV</button>
-   </div>
-   <div class="filterbar">
-     <span class="cap">형식</span>
-     ${TYPES.map(t=>`<button class="chip ${state.tf.has(t)?'on '+t:''}" data-t="${t}">${t}</button>`).join("")}
-     ${state.tf.size?`<button class="btn" id="clr" style="padding:2px 8px;font-size:12px">초기화</button>`:""}
-   </div>`;
+  el.innerHTML=`
+  <div class="topbar">
+    <div class="ttl"><h2>${esc(viewTitle)}</h2><p>${rows.length}편${conflictNote} · 헤더 클릭 정렬</p></div>
+    <span class="savebadge" id="savebadge" style="opacity:0">저장됨</span>
+    <div class="sr">${I.search}<input id="q" placeholder="제목·주제·번호 검색" value="${esc(state.query)}"></div>
+    <button class="btn" id="refresh-btn">${I.refresh} <span>새로고침</span></button>
+    <button class="btn" id="ics-btn">${I.cal} <span>캘린더</span></button>
+    <button class="btn" id="csv-btn">${I.dl} <span>CSV</span></button>
+  </div>
+  <div class="filterbar">
+    <span class="fcap">형식</span>
+    ${TYPES.map(t=>`<button class="chip ${state.tf.has(t)?"on "+t:""}" data-t="${t}">${t}</button>`).join("")}
+    ${state.tf.size?`<button class="clrbtn" id="clr">초기화</button>`:""}
+    <div class="stats-strip">${statsHtml}</div>
+  </div>
+  <div class="scroll" id="tbl-wrap"></div>`;
 
-  let body;
-  if(rows.length===0){
-    body=`<div class="empty"><div class="icon">${I.cal}</div><p>${state.rows.length===0?"아직 등록된 페이퍼가 없습니다. 왼쪽에서 이름을 골라 추가해 보세요.":"조건에 맞는 페이퍼가 없습니다. 필터를 바꿔 보세요."}</p></div>`;
-  } else {
-    body=`<div class="scroll"><table><thead><tr>
-      ${th("student","학생")}${th("type","형식")}${th("paperNo","번호")}${th("task","주제")}${th("title","페이퍼 명")}
-      ${th("date","날짜")}${th("day","요일")}${th("time","시간")}${th("location","위치 / 세션")}<th>링크</th>
-    </tr></thead><tbody>${rows.map(r=>`<tr>
-      <td><button class="nm" data-jump="${esc(r.student)}">${esc(r.student)}</button></td>
-      <td>${pill(r.type)}</td>
-      <td class="num">${r.paperNo?esc(r.paperNo):'<span class="dim">—</span>'}</td>
-      <td>${r.task?esc(r.task):'<span class="dim">—</span>'}</td>
-      <td>${r.title?esc(r.title):'<span class="dim">제목 미입력</span>'}</td>
-      <td>${r.date?esc(r.date):'<span class="dim">—</span>'}</td>
-      <td style="color:#64748b">${r.day?esc(r.day):'<span class="dim">—</span>'}</td>
-      <td class="num">${r.time?esc(r.time):'<span class="dim">—</span>'}</td>
-      <td>${r.location?esc(r.location):'<span class="dim">—</span>'}</td>
-      <td>${r.link?`<a class="link" href="${esc(r.link)}" target="_blank" rel="noreferrer">열기 ${I.ext}</a>`:'<span class="dim">—</span>'}</td>
-    </tr>`).join("")}</tbody></table></div>`;
-  }
-  el.innerHTML=head+body;
+  const isAll=state.view==="all";
+  const cols=isAll?8:7;
+  const tableRows=[];
+  if(state.sort.key==="date"){
+    let lastDate="";
+    rows.forEach(r=>{
+      if(r.date&&r.date!==lastDate){lastDate=r.date;
+        tableRows.push({kind:"group",label:r.date+(r.day?` (${r.day})`:"")});}
+      tableRows.push({kind:"row",r,gi:state.rows.indexOf(r)});
+    });
+  }else rows.forEach(r=>tableRows.push({kind:"row",r,gi:state.rows.indexOf(r)}));
 
-  el.querySelectorAll("th.sortable").forEach(t=>t.onclick=()=>{const k=t.dataset.k;
-    state.sort = state.sort.key===k?{key:k,dir:state.sort.dir==="asc"?"desc":"asc"}:{key:k,dir:"asc"}; renderContent();});
-  el.querySelectorAll(".chip[data-t]").forEach(c=>c.onclick=()=>{const t=c.dataset.t; state.tf.has(t)?state.tf.delete(t):state.tf.add(t); renderContent();});
-  const clr=el.querySelector("#clr"); if(clr) clr.onclick=()=>{state.tf.clear();renderContent()};
-  el.querySelectorAll(".nm[data-jump]").forEach(n=>n.onclick=()=>{state.view=n.dataset.jump;render()});
-  const qi=el.querySelector("#q"); qi.oninput=()=>{state.query=qi.value; const car=qi.selectionStart; renderContent(); const nq=document.getElementById("q"); if(nq){nq.focus(); nq.setSelectionRange(car,car);} };
-  el.querySelector("#refresh").onclick=loadAll;
-  el.querySelector("#csv").onclick=()=>exportCsv(rows);
+  document.getElementById("tbl-wrap").innerHTML=rows.length===0
+    ?`<div class="empty"><p>${state.rows.length===0?"아직 등록된 페이퍼가 없습니다. 왼쪽 편집 탭에서 이름을 골라 추가하세요.":"조건에 맞는 페이퍼가 없습니다."}</p></div>`
+    :`<table><thead><tr>
+      ${isAll?th("student","학생"):""}${th("type","형식")}${th("paperNo","번호")}
+      ${th("task","주제")}${th("title","페이퍼 명")}${th("date","일정")}${th("location","위치 / 세션")}<th>링크</th>
+    </tr></thead><tbody>
+    ${tableRows.map(item=>{
+      if(item.kind==="group")return`<tr class="dg"><td colspan="${cols}">${esc(item.label)}</td></tr>`;
+      const r=item.r,isC=conflictIdxs.has(item.gi);
+      return`<tr>
+        ${isAll?`<td><button class="nmbtn" data-jump="${esc(r.student)}">${esc(r.student)||'<span class="dim">—</span>'}</button></td>`:""}
+        <td>${pill(r.type)}</td>
+        <td class="num">${esc(r.paperNo)||'<span class="dim">—</span>'}</td>
+        <td style="color:#475569">${esc(r.task)||'<span class="dim">—</span>'}</td>
+        <td style="max-width:260px;line-height:1.45">${esc(r.title)||'<span class="dim">—</span>'}</td>
+        <td>${schedCell(r,isC)}</td>
+        <td style="max-width:180px;color:#475569">${esc(r.location)||'<span class="dim">—</span>'}</td>
+        <td>${r.link?`<a class="ext" href="${esc(r.link)}" target="_blank" rel="noreferrer">열기 ${I.ext}</a>`:'<span class="dim">—</span>'}</td>
+      </tr>`;
+    }).join("")}
+    </tbody></table>`;
+
+  el.querySelectorAll("th.srt").forEach(t=>t.onclick=()=>{const k=t.dataset.k;
+    state.sort=state.sort.key===k?{key:k,dir:state.sort.dir==="asc"?"desc":"asc"}:{key:k,dir:"asc"};renderContent();});
+  el.querySelectorAll(".chip[data-t]").forEach(c=>c.onclick=()=>{const t=c.dataset.t;
+    state.tf.has(t)?state.tf.delete(t):state.tf.add(t);renderContent();});
+  const clr=el.querySelector("#clr");if(clr)clr.onclick=()=>{state.tf.clear();renderContent();};
+  el.querySelectorAll(".nmbtn[data-jump]").forEach(b=>b.onclick=()=>{state.view=b.dataset.jump;renderContent();});
+  const qi=el.querySelector("#q");
+  qi.oninput=()=>{state.query=qi.value;const c=qi.selectionStart;renderContent();
+    const nq=document.getElementById("q");if(nq){nq.focus();nq.setSelectionRange(c,c);}};
+  el.querySelector("#refresh-btn").onclick=loadAll;
+  el.querySelector("#csv-btn").onclick=()=>exportCsv(rows);
+  el.querySelector("#ics-btn").onclick=()=>exportIcs(rows);
 }
 
+/* ── Student editable view ── */
+function renderStudent(el){
+  const name=state.view,rows=state.rows.filter(r=>r.student===name);
+  el.innerHTML=`
+  <div class="topbar">
+    <div class="ttl"><h2>${esc(name)}</h2><p>${rows.length}편 · 편집 모드</p></div>
+    <span class="savebadge" id="savebadge" style="opacity:0">저장됨</span>
+    <button class="btn primary" id="add-btn">${I.plus} 페이퍼 추가</button>
+  </div>
+  ${rows.length===0
+    ?`<div class="empty"><p>아직 추가한 페이퍼가 없습니다.<br>"페이퍼 추가"를 눌러 시작하세요.</p>
+       <button class="btn primary" id="add-btn2">${I.plus} 페이퍼 추가</button></div>`
+    :`<div class="scroll"><table><thead><tr>
+        <th style="width:100px">발표 형식</th>
+        ${COLDEF.map(c=>`<th style="min-width:${c.w}">${c.label}</th>`).join("")}
+        <th style="width:36px"></th>
+      </tr></thead><tbody>
+      ${rows.map(r=>`<tr data-id="${r.id}">
+        <td class="typecell">
+          <button class="typebtn" data-type-btn>${r.type?pill(r.type):'<span class="dim">선택</span>'} ${I.chev}</button>
+        </td>
+        ${COLDEF.map(c=>`<td><input class="cellinput" data-field="${c.f}" placeholder="${esc(c.ph)}"
+          value="${c.f==="schedule"?esc(scheduleDisplay(r)):esc(r[c.f])}"></td>`).join("")}
+        <td><button class="delbtn" data-del>${I.trash}</button></td>
+      </tr>`).join("")}
+      </tbody></table></div>`}`;
+
+  const add=()=>{upsertRow(blankRow(name));render();};
+  const a1=el.querySelector("#add-btn");if(a1)a1.onclick=add;
+  const a2=el.querySelector("#add-btn2");if(a2)a2.onclick=add;
+
+  el.querySelectorAll("tr[data-id]").forEach(tr=>{
+    const id=tr.dataset.id;
+    tr.querySelector("[data-del]").onclick=()=>{deleteRow(id);render();};
+    tr.querySelectorAll("input.cellinput").forEach(inp=>{
+      inp.addEventListener("input",()=>{
+        const row=state.rows.find(r=>r.id===id);if(!row)return;
+        if(inp.dataset.field==="schedule"){
+          clearTimeout(saveTimers[id+"s"]);
+          saveTimers[id+"s"]=setTimeout(()=>{
+            const p=parseSchedule(inp.value);row.date=p.date;row.day=p.day;row.time=p.time;
+            clearTimeout(saveTimers[id]);saveTimers[id]=setTimeout(()=>upsertRow(row),200);
+          },600);
+        }else{
+          row[inp.dataset.field]=inp.value;
+          clearTimeout(saveTimers[id]);saveTimers[id]=setTimeout(()=>upsertRow(row),450);
+        }
+      });
+      inp.addEventListener("blur",()=>{
+        if(inp.dataset.field!=="schedule")return;
+        const row=state.rows.find(r=>r.id===id);if(!row)return;
+        const p=parseSchedule(inp.value);row.date=p.date;row.day=p.day;row.time=p.time;
+        inp.value=scheduleDisplay(row);
+        upsertRow(row);
+      });
+    });
+    const tb=tr.querySelector("[data-type-btn]");
+    tb.onclick=(e)=>{e.stopPropagation();openTypeMenu(tb,id);};
+  });
+}
+
+/* ── Type dropdown (fixed: uses onmousedown + stopPropagation) ── */
+function openTypeMenu(btn,id){
+  closeMenus();
+  const m=document.createElement("div");m.className="menu";
+  m.innerHTML=["",...TYPES].map(t=>`<button data-v="${t}">${t?pill(t):'<span class="dim">비우기</span>'}</button>`).join("");
+  btn.parentNode.appendChild(m);
+  m.querySelectorAll("button").forEach(b=>{
+    b.onmousedown=(e)=>{
+      e.stopPropagation();
+      const row=state.rows.find(r=>r.id===id);
+      if(row){row.type=b.dataset.v;upsertRow(row);}
+      closeMenus();render();
+    };
+  });
+  setTimeout(()=>document.addEventListener("mousedown",closeMenus,{once:true}),0);
+}
+function closeMenus(){document.querySelectorAll(".menu").forEach(m=>m.remove());}
+
+/* ── Exports ── */
 function exportCsv(rows){
-  const head=["학생","발표형식","고유번호","주제","페이퍼 명","날짜","요일","시간(KST)","위치/세션","링크"];
+  const head=["학생","형식","번호","주제","페이퍼명","날짜","요일","시간(KST)","위치/세션","링크"];
   const cell=v=>`"${String(v||"").replace(/"/g,'""')}"`;
   const lines=[head.map(cell).join(",")];
   rows.forEach(r=>lines.push([r.student,r.type,r.paperNo,r.task,r.title,r.date,r.day,r.time,r.location,r.link].map(cell).join(",")));
   const blob=new Blob(["﻿"+lines.join("\n")],{type:"text/csv;charset=utf-8;"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="ICML2026_관심페이퍼.csv"; a.click(); URL.revokeObjectURL(a.href);
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ICML2026_페이퍼.csv";a.click();
+}
+function exportIcs(rows){
+  const pad=n=>String(n).padStart(2,"0");
+  function dt(dateStr,timeStr){if(!dateStr)return"";
+    const dm=dateStr.match(/([a-zA-Z]+)\s*(\d+)/);if(!dm)return"";
+    const mo=MONTHS[dm[1].toLowerCase().slice(0,3)];if(!mo)return"";
+    const dy=parseInt(dm[2]),tm=timeStr?timeStr.match(/(\d+):(\d+)/):null;
+    const h=tm?parseInt(tm[1]):9,mi=tm?parseInt(tm[2]):0;
+    return`20260${pad(mo)}${pad(dy)}T${pad(h)}${pad(mi)}00`;}
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//ICML2026//KR","CALSCALE:GREGORIAN"];
+  rows.forEach((r,i)=>{const ds=dt(r.date,r.time);if(!ds)return;
+    lines.push("BEGIN:VEVENT",`UID:icml2026-${i}@lait`,`DTSTART;TZID=Asia/Seoul:${ds}`,
+      `DURATION:PT2H`,`SUMMARY:${(r.title||r.task||"페이퍼").replace(/[,;\\]/g,"\\$&")}`,
+      `DESCRIPTION:학생: ${r.student}\\n형식: ${r.type}\\n번호: ${r.paperNo}`,
+      ...(r.location?[`LOCATION:${r.location.replace(/[,;\\]/g,"\\$&")}`]:[]),
+      ...(r.link?[`URL:${r.link}`]:[]),"END:VEVENT");});
+  lines.push("END:VCALENDAR");
+  const blob=new Blob([lines.join("\r\n")],{type:"text/calendar;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ICML2026_일정.ics";a.click();
 }
 
-function renderStudent(el){
-  const name=state.view; const rows=rowsOf(name);
-  const head=`<div class="topbar">
-     <div class="grow"><h2 class="serif">${esc(name)}</h2><div class="sub">${rows.length}편 · 보고 싶은 페이퍼를 입력하세요</div></div>
-     <span id="status" class="status" style="opacity:0">저장됨</span>
-     <button class="btn primary" id="add">${I.plus} 페이퍼 추가</button>
-   </div>`;
-  let body;
-  if(rows.length===0){
-    body=`<div class="empty"><div class="icon">${I.cal}</div><p>아직 추가한 페이퍼가 없습니다. "페이퍼 추가"를 눌러 시작하세요.</p>
-      <button class="btn primary" id="add2">${I.plus} 페이퍼 추가</button></div>`;
-  } else {
-    body=`<div class="scroll"><table><thead><tr>
-      <th style="width:130px">발표 형식</th>
-      ${COLDEF.map(c=>`<th style="width:${c.w}">${c.label}</th>`).join("")}
-      <th style="width:44px"></th></tr></thead><tbody>
-      ${rows.map(r=>`<tr data-id="${r.id}">
-        <td class="typecell">
-          <button class="typebtn" data-type-btn>${r.type?pill(r.type):'선택'} ${I.chev}</button>
-        </td>
-        ${COLDEF.map(c=>`<td><input class="cellinput" data-field="${c.f}" placeholder="${esc(c.ph)}" value="${esc(r[c.f])}"></td>`).join("")}
-        <td style="text-align:center"><button class="del" data-del title="삭제">${I.trash}</button></td>
-      </tr>`).join("")}
-    </tbody></table></div>`;
-  }
-  el.innerHTML=head+body;
-  const add=()=>{ upsertRow(blankRow(name)); render(); };
-  const a1=el.querySelector("#add"); if(a1)a1.onclick=add;
-  const a2=el.querySelector("#add2"); if(a2)a2.onclick=add;
-
-  el.querySelectorAll("tr[data-id]").forEach(tr=>{
-    const id=tr.dataset.id;
-    tr.querySelectorAll("input.cellinput").forEach(inp=>{
-      inp.addEventListener("input",()=>{ const row=state.rows.find(r=>r.id===id); if(!row)return;
-        row[inp.dataset.field]=inp.value;
-        clearTimeout(saveTimers[id]); saveTimers[id]=setTimeout(()=>upsertRow(row),450); });
-    });
-    tr.querySelector("[data-del]").onclick=()=>{ deleteRow(id); render(); };
-    const tb=tr.querySelector("[data-type-btn]");
-    tb.onclick=(e)=>{ e.stopPropagation(); openTypeMenu(tb,id); };
-  });
-}
-
-function openTypeMenu(btn,id){
-  closeMenus();
-  const m=document.createElement("div"); m.className="menu";
-  m.innerHTML=["",...TYPES].map(t=>`<button data-v="${t}">${t?pill(t):'<span class="dim">비우기</span>'}</button>`).join("");
-  btn.parentNode.appendChild(m);
-  m.querySelectorAll("button").forEach(b=>b.onclick=()=>{ const row=state.rows.find(r=>r.id===id); if(row){row.type=b.dataset.v; upsertRow(row);} closeMenus(); render(); });
-  setTimeout(()=>document.addEventListener("mousedown",closeMenus,{once:true}),0);
-}
-function closeMenus(){ document.querySelectorAll(".menu").forEach(m=>m.remove()); }
-
+/* ── Init ── */
 loadAll();
+if(REFRESH_MS>0)setInterval(()=>{if(state.mode==="view"||state.view==="all")loadAll();},REFRESH_MS);
 </script>
 </body>
 </html>
